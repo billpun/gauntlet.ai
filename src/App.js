@@ -1,43 +1,74 @@
+import React, { Fragment, useState } from "react";
 import {
-  EuiIcon,
-  EuiHeader,
-  EuiHeaderSection,
-  EuiHeaderSectionItem,
-  EuiHeaderLink,
-  EuiHeaderLinks
-} from "@elastic/eui";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMitten } from "@fortawesome/free-solid-svg-icons";
-import "./styles.css";
-import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
+  Route,
+  Link,
+  Switch,
+  withRouter,
+  Redirect,
+  useHistory
+} from "react-router-dom";
 
-export default function App() {
-  const Header = () => (
-    <EuiHeader>
-      <EuiHeaderSection>
-        <EuiHeaderSectionItem
-          border="right"
-          style={{ fontWeight: 500, fontSize: 16 }}
-        >
-          <FontAwesomeIcon icon={faMitten} size="lg" />
-          &nbsp; Gauntlet.ai
-        </EuiHeaderSectionItem>
-      </EuiHeaderSection>
+import "./styles.scss";
 
-      <EuiHeaderSection side="right">
-        <EuiHeaderSectionItem>
-          <EuiHeaderLinks aria-label="App navigation links example">
-            <EuiHeaderLink>Docs</EuiHeaderLink>
-            <EuiHeaderLink>About Us</EuiHeaderLink>
-            <EuiHeaderLink>Help</EuiHeaderLink>
-          </EuiHeaderLinks>
-        </EuiHeaderSectionItem>
-      </EuiHeaderSection>
-    </EuiHeader>
+import Header from "./components/Header";
+import Tabs from "./components/Tabs";
+import Projects from "./components/Projects";
+import TestKits from "./components/TestKits";
+import Datasets from "./components/Datasets";
+import Models from "./components/Models";
+
+import { EuiPageContent } from "@elastic/eui";
+
+const App = () => {
+  const history = useHistory();
+  const [tabId, setTabId] = useState("projects");
+  const onChangeTab = (_tabId) => {
+    setTabId(_tabId);
+    history.push("/" + _tabId);
+  };
+
+  const PageNotFound = () => (
+    <EuiPageContent
+      verticalPosition="center"
+      horizontalPosition="center"
+      color="transparent"
+      className="app-content"
+      hasShadow={false}
+    >
+      <div>
+        <h1>404 - Not Found!</h1>
+        <Link to="/">Go Home</Link>
+      </div>
+    </EuiPageContent>
   );
+
   return (
-    <>
+    <Fragment>
       <Header />
-    </>
+      <div
+        style={{
+          paddingTop: 30,
+          paddingBottom: 60,
+          maxWidth: 1200,
+          margin: "auto",
+          width: "90%",
+          alignItems: "center"
+        }}
+      >
+        <Tabs tabId={tabId} setTabId={onChangeTab} />
+        <div style={{ padding: 30, background: "white" }}>
+          <Switch>
+            <Redirect exact from="/" to="/projects" />
+            <Route path="/projects" component={Projects} />
+            <Route path="/testkits" component={TestKits} />
+            <Route path="/datasets" component={Datasets} />
+            <Route path="/models" component={Models} />
+            <Route component={PageNotFound} />
+          </Switch>
+        </div>
+      </div>
+    </Fragment>
   );
-}
+};
+
+export default withRouter(App);
