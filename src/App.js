@@ -11,11 +11,13 @@ import {
 import "./styles.scss";
 
 import Header from "./components/Header";
-import Tabs from "./components/Tabs";
+import Tabs, { tabs } from "./components/Tabs";
 import Projects from "./components/Projects";
 import TestKits from "./components/TestKits";
 import Datasets from "./components/Datasets";
 import Models from "./components/Models";
+
+import Project from "./components/Project";
 
 import { EuiPageContent } from "@elastic/eui";
 
@@ -24,7 +26,7 @@ const App = () => {
   const [tabId, setTabId] = useState("projects");
   const onChangeTab = (_tabId) => {
     setTabId(_tabId);
-    history.push("/" + _tabId);
+    history.push(`/${_tabId}`);
   };
 
   const PageNotFound = () => (
@@ -56,10 +58,11 @@ const App = () => {
         }}
       >
         <Tabs tabId={tabId} setTabId={onChangeTab} />
-        <div style={{ padding: 30, background: "white" }}>
+        <div style={{ padding: "10px 30px", background: "white" }}>
           <Switch>
             <Redirect exact from="/" to="/projects" />
             <Route path="/projects" component={Projects} />
+            <Route path="/project/:key" component={Project} />
             <Route path="/testkits" component={TestKits} />
             <Route path="/datasets" component={Datasets} />
             <Route path="/models" component={Models} />

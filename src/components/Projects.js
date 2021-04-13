@@ -1,36 +1,67 @@
 import React, { useState } from "react";
-import { EuiFlexGroup, EuiHealth, EuiInMemoryTable } from "@elastic/eui";
+import {
+  Route,
+  Link,
+  Switch,
+  withRouter,
+  Redirect,
+  useHistory
+} from "react-router-dom";
+import { EuiHealth, EuiInMemoryTable } from "@elastic/eui";
 import { getColumns } from "./Functions";
 import { getRiskColor } from "../data/RiskLevels";
 import { getStatusColor } from "../data/Statuses";
 import P from "../data/Projects";
 
 const Projects = () => {
+  const history = useHistory();
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortField, setSortField] = useState("");
   const [sortDirection, setSortDirection] = useState("asc");
 
-  const columns = getColumns(P).map((c) => {
-    let out = { ...c, sortable: true };
-    if (c.field === "risk_level") {
-      out = {
+  const viewProject = (p) => {
+    history.push(`/project/${p.key}`);
+  };
+
+  const columns = getColumns(P)
+    .map((c) => {
+      let out = {
         ...c,
-        render: (status) => {
-          return <EuiHealth color={getRiskColor(status)}>{status}</EuiHealth>;
-        }
+        sortable: true
       };
-    }
-    if (c.field === "status") {
-      out = {
-        ...c,
-        render: (status) => {
-          return <EuiHealth color={getStatusColor(status)}>{status}</EuiHealth>;
+      if (c.field === "risk_level") {
+        out = {
+          ...c,
+          render: (status) => {
+            return <EuiHealth color={getRiskColor(status)}>{status}</EuiHealth>;
+          }
+        };
+      }
+      if (c.field === "status") {
+        out = {
+          ...c,
+          render: (status) => {
+            return (
+              <EuiHealth color={getStatusColor(status)}>{status}</EuiHealth>
+            );
+          }
+        };
+      }
+      return out;
+    })
+    .concat({
+      name: "",
+      actions: [
+        {
+          name: "magnify",
+          description: "View this project",
+          icon: "magnifyWithPlus",
+          type: "icon",
+          onClick: viewProject
         }
-      };
-    }
-    return out;
-  });
+      ]
+    });
 
   const onTableChange = ({ page = {}, sort = {} }) => {
     const { index: pageIndex, size: pageSize } = page;
