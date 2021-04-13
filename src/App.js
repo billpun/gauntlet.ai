@@ -50,7 +50,7 @@ const App = () => {
       <div
         style={{
           paddingTop: 30,
-          paddingBottom: 60,
+          paddingBottom: 30,
           maxWidth: 1200,
           margin: "auto",
           width: "90%",
@@ -58,7 +58,14 @@ const App = () => {
         }}
       >
         <Tabs tabId={tabId} setTabId={onChangeTab} />
-        <div style={{ padding: "10px 30px", background: "white" }}>
+        <div
+          className="shadow"
+          style={{
+            padding: "20px 30px",
+            background: "white",
+            height: "calc(100vh - 160px)"
+          }}
+        >
           <Switch>
             <Redirect exact from="/" to="/projects" />
             <Route path="/projects" component={Projects} />

@@ -42,10 +42,10 @@ export const tabs = [
 
 const MainTabs = (props) => {
   return (
-    <EuiTabs expand={TextTrackCueList}>
+    <EuiTabs size="s" className="shadow" expand={TextTrackCueList}>
       {tabs.map((tab, index) => (
         <EuiTab
-          style={{ background: "white" }}
+          style={{ background: "white", cursor: "pointer" }}
           onClick={() => {
             props.setTabId(tab.id);
           }}

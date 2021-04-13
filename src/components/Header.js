@@ -1,8 +1,10 @@
 import React from "react";
 import {
+  EuiAvatar,
   EuiHeader,
   EuiHeaderSection,
   EuiHeaderSectionItem,
+  EuiHeaderSectionItemButton,
   EuiHeaderLink,
   EuiHeaderLinks,
   EuiImage
@@ -28,12 +30,19 @@ const Header = () => (
 
     <EuiHeaderSection side="right">
       <EuiHeaderSectionItem>
-        <EuiHeaderLinks aria-label="App navigation links example">
-          <EuiHeaderLink>Docs</EuiHeaderLink>
-          <EuiHeaderLink>About Us</EuiHeaderLink>
-          <EuiHeaderLink>Help</EuiHeaderLink>
+        <EuiHeaderLinks aria-label="Navigation Links">
+          <EuiHeaderLink>API Docs</EuiHeaderLink>
         </EuiHeaderLinks>
       </EuiHeaderSectionItem>
+      <EuiHeaderSectionItemButton
+        style={{ paddingTop: 7 }}
+        aria-controls="Header Avatar"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-label="Account Menu"
+      >
+        <EuiAvatar name="John Doe" type="space" color="#871F78" size="m" />
+      </EuiHeaderSectionItemButton>
     </EuiHeaderSection>
   </EuiHeader>
 );
