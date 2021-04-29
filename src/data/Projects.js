@@ -1,6 +1,6 @@
 const faker = require("faker");
 
-let projects = [
+export let projects = [
   {
     key: "P00001",
     name: "Orchestra - ROME",
@@ -83,4 +83,13 @@ projects = projects.map((p) => {
   };
 });
 
-export default projects;
+export const projectColumns = {
+  key: "Key",
+  name: "Project Name",
+  business_unit: "BU",
+  version: "Version",
+  risk_level: "Risk Level",
+  status: "Status",
+  created_dt: "Created On",
+  updated_dt: "Updated On"
+};

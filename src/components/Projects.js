@@ -1,30 +1,36 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
-  Route,
-  Link,
-  Switch,
-  withRouter,
-  Redirect,
-  useHistory
-} from "react-router-dom";
-import { EuiHealth, EuiInMemoryTable } from "@elastic/eui";
+  EuiButtonIcon,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFieldSearch,
+  EuiHealth,
+  EuiInMemoryTable,
+  EuiText,
+  EuiToast,
+  EuiToolTip
+} from "@elastic/eui";
 import { getColumns } from "./Functions";
 import { getRiskColor } from "../data/RiskLevels";
 import { getStatusColor } from "../data/Statuses";
-import P from "../data/Projects";
+import { projects as P, projectColumns } from "../data/Projects";
+import uuid from "react-uuid";
 
-const Projects = () => {
+const Projects = (props) => {
   const history = useHistory();
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortField, setSortField] = useState("");
   const [sortDirection, setSortDirection] = useState("asc");
+  const [searchValue, setSearchValue] = useState("");
+  const [projects, setProjects] = useState(P);
 
   const viewProject = (p) => {
     history.push(`/project/${p.key}`);
   };
 
-  const columns = getColumns(P)
+  const columns = getColumns(P, projectColumns)
     .map((c) => {
       let out = {
         ...c,
@@ -72,26 +78,84 @@ const Projects = () => {
     setSortDirection(sortDirection);
   };
 
+  const onSearchChange = (e) => {
+    const keyword = e.target.value;
+    setSearchValue(keyword);
+    const cache = projects.filter(
+      (p) =>
+        Object.keys(p).filter((n) => {
+          return p[n].includes(keyword);
+        }).length > 0
+    );
+    if (keyword !== "" && cache.length > 0) {
+      setProjects(cache);
+    } else {
+      setProjects(P);
+    }
+  };
+
   return (
-    <EuiInMemoryTable
-      style={{ width: "100%" }}
-      compressed={true}
-      items={P}
-      columns={columns}
-      tableLayout="auto"
-      onChange={onTableChange}
-      sorting={{
-        sort: {
-          field: sortField,
-          direction: sortDirection
-        }
-      }}
-      pagination={{
-        pageIndex: pageIndex,
-        pageSize: pageSize,
-        pageSizeOptions: [10, 25, 50]
-      }}
-    />
+    <EuiFlexGroup gutterSize="s" direction="column">
+      <EuiFlexItem>
+        <EuiFlexGroup gutterSize="s">
+          <EuiFlexItem>
+            <EuiText>{projects.length} Projects</EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiFieldSearch
+              style={{ width: 250, height: 24 }}
+              placeholder="Search projects"
+              value={searchValue}
+              onChange={onSearchChange}
+              isClearable={true}
+              aria-label="abc"
+              compressed={true}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem grow={false} style={{ float: "right" }}>
+            <EuiToolTip position="top" content="Create a new project">
+              <EuiButtonIcon
+                display="base"
+                onClick={() => {
+                  return props.setToasts([
+                    {
+                      id: uuid(),
+                      title: "Not supported",
+                      color: "warning",
+                      iconType: "iInCircle",
+                      text: ""
+                    }
+                  ]);
+                }}
+                iconType="plus"
+                aria-label="Next"
+              />
+            </EuiToolTip>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiInMemoryTable
+          style={{ width: "100%" }}
+          compressed={true}
+          items={projects}
+          columns={columns}
+          tableLayout="auto"
+          onChange={onTableChange}
+          sorting={{
+            sort: {
+              field: sortField,
+              direction: sortDirection
+            }
+          }}
+          pagination={{
+            pageIndex: pageIndex,
+            pageSize: pageSize,
+            pageSizeOptions: [10, 25, 50]
+          }}
+        />
+      </EuiFlexItem>
+    </EuiFlexGroup>
   );
 };
 

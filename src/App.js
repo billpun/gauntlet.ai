@@ -8,6 +8,7 @@ import {
   useHistory
 } from "react-router-dom";
 
+import { EuiGlobalToastList } from "@elastic/eui";
 import "./styles.scss";
 
 import Header from "./components/Header";
@@ -28,6 +29,7 @@ const App = () => {
     setTabId(_tabId);
     history.push(`/${_tabId}`);
   };
+  const [toasts, setToasts] = useState([]);
 
   const PageNotFound = () => (
     <EuiPageContent
@@ -68,7 +70,10 @@ const App = () => {
         >
           <Switch>
             <Redirect exact from="/" to="/projects" />
-            <Route path="/projects" component={Projects} />
+            <Route
+              path="/projects"
+              render={(props) => <Projects {...props} setToasts={setToasts} />}
+            />
             <Route path="/project/:key" component={Project} />
             <Route path="/testkits" component={TestKits} />
             <Route path="/datasets" component={Datasets} />
@@ -77,6 +82,7 @@ const App = () => {
           </Switch>
         </div>
       </div>
+      <EuiGlobalToastList toasts={toasts} toastLifeTimeMs={5000} />
     </Fragment>
   );
 };
