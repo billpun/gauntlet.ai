@@ -14,7 +14,7 @@ import {
 import { getColumns } from "./Functions";
 import { getRiskColor } from "../data/RiskLevels";
 import { getStatusColor } from "../data/Statuses";
-import { projects as P, projectColumns } from "../data/Projects";
+import { projectColumns } from "../data/Projects";
 import uuid from "react-uuid";
 
 const Projects = (props) => {
@@ -24,13 +24,13 @@ const Projects = (props) => {
   const [sortField, setSortField] = useState("");
   const [sortDirection, setSortDirection] = useState("asc");
   const [searchValue, setSearchValue] = useState("");
-  const [projects, setProjects] = useState(P);
-
+  const { projects, setProjects } = props;
   const viewProject = (p) => {
     history.push(`/project/${p.key}`);
   };
 
-  const columns = getColumns(P, projectColumns)
+  const columns = getColumns(projects, projectColumns)
+    .filter((c) => Object.keys(projectColumns).includes(c.field))
     .map((c) => {
       let out = {
         ...c,
@@ -51,6 +51,15 @@ const Projects = (props) => {
             return (
               <EuiHealth color={getStatusColor(status)}>{status}</EuiHealth>
             );
+          }
+        };
+      }
+      if (c.field === "versions") {
+        console.log("hello");
+        out = {
+          ...c,
+          render: (versions) => {
+            return <div>{versions[versions.length - 1]}</div>;
           }
         };
       }
@@ -90,49 +99,46 @@ const Projects = (props) => {
     if (keyword !== "" && cache.length > 0) {
       setProjects(cache);
     } else {
-      setProjects(P);
+      setProjects(projects);
     }
   };
 
   return (
     <EuiFlexGroup gutterSize="s" direction="column">
       <EuiFlexItem>
-        <EuiFlexGroup gutterSize="s">
-          <EuiFlexItem>
-            <EuiText>{projects.length} Projects</EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+        <p style={{ textAlign: "left" }}>
+          <span class="euiText--medium">{projects.length} Projects</span>
+          <span style={{ float: "right" }}>
             <EuiFieldSearch
-              style={{ width: 250, height: 24 }}
               placeholder="Search projects"
               value={searchValue}
               onChange={onSearchChange}
               isClearable={true}
               aria-label="abc"
               compressed={true}
-            />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false} style={{ float: "right" }}>
-            <EuiToolTip position="top" content="Create a new project">
-              <EuiButtonIcon
-                display="base"
-                onClick={() => {
-                  return props.setToasts([
-                    {
-                      id: uuid(),
-                      title: "Not supported",
-                      color: "warning",
-                      iconType: "iInCircle",
-                      text: ""
+              append={
+                <EuiToolTip position="top" content="Create a new project">
+                  <EuiButtonIcon
+                    display="base"
+                    onClick={() =>
+                      props.setToasts([
+                        {
+                          id: uuid(),
+                          title: "Not supported!",
+                          color: "warning",
+                          iconType: "iInCircle",
+                          text: ""
+                        }
+                      ])
                     }
-                  ]);
-                }}
-                iconType="plus"
-                aria-label="Next"
-              />
-            </EuiToolTip>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+                    iconType="plus"
+                    aria-label="Next"
+                  />
+                </EuiToolTip>
+              }
+            />
+          </span>
+        </p>
       </EuiFlexItem>
       <EuiFlexItem>
         <EuiInMemoryTable

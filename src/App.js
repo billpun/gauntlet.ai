@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useCallback } from "react";
 import {
   Route,
   Link,
@@ -22,6 +22,8 @@ import Project from "./components/Project";
 
 import { EuiPageContent } from "@elastic/eui";
 
+import { projects as P } from "./data/Projects";
+
 const App = () => {
   const history = useHistory();
   const [tabId, setTabId] = useState("projects");
@@ -30,6 +32,14 @@ const App = () => {
     history.push(`/${_tabId}`);
   };
   const [toasts, setToasts] = useState([]);
+  const [projects, setProjects] = useState(P);
+  const user = {
+    name: "Bill Pun"
+  };
+
+  const handleProjects = useCallback((e) => {
+    setProjects(e);
+  }, []);
 
   const PageNotFound = () => (
     <EuiPageContent
@@ -48,7 +58,7 @@ const App = () => {
 
   return (
     <Fragment>
-      <Header />
+      <Header user={user} setToasts={setToasts} />
       <div
         style={{
           paddingTop: 30,
@@ -65,16 +75,23 @@ const App = () => {
           style={{
             padding: "20px 30px",
             background: "white",
-            height: "calc(100vh - 160px)"
+            minHeight: "calc(100vh - 160px)"
           }}
         >
           <Switch>
             <Redirect exact from="/" to="/projects" />
             <Route
               path="/projects"
-              render={(props) => <Projects {...props} setToasts={setToasts} />}
+              render={(props) => (
+                <Projects projects={projects} setToasts={setToasts} />
+              )}
             />
-            <Route path="/project/:key" component={Project} />
+            <Route
+              path="/project/:key"
+              render={(props) => (
+                <Project projects={projects} setProjects={handleProjects} />
+              )}
+            />
             <Route path="/testkits" component={TestKits} />
             <Route path="/datasets" component={Datasets} />
             <Route path="/models" component={Models} />
@@ -82,7 +99,11 @@ const App = () => {
           </Switch>
         </div>
       </div>
-      <EuiGlobalToastList toasts={toasts} toastLifeTimeMs={5000} />
+      <EuiGlobalToastList
+        toasts={toasts}
+        dismissToast={() => setToasts([])}
+        toastLifeTimeMs={3000}
+      />
     </Fragment>
   );
 };

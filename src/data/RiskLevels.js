@@ -1,7 +1,7 @@
 export const RiskLevels = [
   { status: "High", color: "danger" },
   { status: "Medium", color: "warning" },
-  { status: "Low", color: "success" }
+  { status: "Low", color: "secondary" }
 ];
 
 export const getRiskColor = (status) => {

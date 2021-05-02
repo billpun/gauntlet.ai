@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   EuiAvatar,
   EuiHeader,
@@ -9,13 +9,13 @@ import {
   EuiHeaderLinks,
   EuiImage
 } from "@elastic/eui";
-
+import uuid from "react-uuid";
 import logo from "../assets/images/gauntlet.png";
 
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faMitten } from "@fortawesome/free-solid-svg-icons";
 
-const Header = () => (
+const Header = (props) => (
   <EuiHeader style={{ paddingLeft: 10 }}>
     <EuiHeaderSection>
       <EuiHeaderSectionItem
@@ -31,18 +31,45 @@ const Header = () => (
     <EuiHeaderSection side="right">
       <EuiHeaderSectionItem>
         <EuiHeaderLinks aria-label="Navigation Links">
-          <EuiHeaderLink>API Docs</EuiHeaderLink>
+          <EuiHeaderLink
+            onClick={() =>
+              props.setToasts([
+                {
+                  id: uuid(),
+                  title: "Not supported!",
+                  color: "warning",
+                  iconType: "iInCircle",
+                  text: ""
+                }
+              ])
+            }
+          >
+            API Docs
+          </EuiHeaderLink>
         </EuiHeaderLinks>
       </EuiHeaderSectionItem>
-      <EuiHeaderSectionItemButton
-        style={{ paddingTop: 7 }}
-        aria-controls="Header Avatar"
-        aria-expanded="false"
-        aria-haspopup="true"
-        aria-label="Account Menu"
-      >
-        <EuiAvatar name="John Doe" type="space" color="#871F78" size="m" />
-      </EuiHeaderSectionItemButton>
+
+      <EuiHeaderSectionItem>
+        <EuiHeaderSectionItemButton
+          aria-controls="Header Avatar"
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-label="Account Menu"
+          onClick={() =>
+            props.setToasts([
+              {
+                id: uuid(),
+                title: "Not supported!",
+                color: "warning",
+                iconType: "iInCircle",
+                text: ""
+              }
+            ])
+          }
+        >
+          <EuiAvatar name="Bill Pun" type="space" color="#871F78" size="m" />
+        </EuiHeaderSectionItemButton>
+      </EuiHeaderSectionItem>
     </EuiHeaderSection>
   </EuiHeader>
 );
